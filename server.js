@@ -4,7 +4,7 @@ var initPos = [0, 0]    // (x, y)
 var express = require('express')    // 导入express模块
 var app = express()    // 创建一个express实例
 var server = require('ws').Server    // 创建一个websocket服务
-var wss = new server({port:3000})
+var wss = new server({port:443})
 const io = require('nodejs-websocket')  // 导入nodejs-websocket模块
 
 wss.on('connection', function connection(ws) {
