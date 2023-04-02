@@ -31,11 +31,6 @@ setInterval(function(){ //更新玩家位置坐标  // update players' pos
 }, 20);  // 50Hz
 */
 
-setInterval(function(){ //清除玩家列表    // clear all player
-    console.log("Clear PlayerList")
-    playerList = {}
-}, 10*60*1000);  // 10min
-
 wss.on('connection', function connection(ws) {
     console.log('New Connection')
 
