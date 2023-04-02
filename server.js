@@ -8,6 +8,9 @@ var wss = new server({port:3000})
 const io = require('nodejs-websocket')  // 导入nodejs-websocket模块
 
 console.log("Server started")
+
+// Use client's pos, well, unable to check bordar for sure from server then
+/*
 setInterval(function(){ //更新玩家位置坐标  // update players' pos
     for(var key in playerList){
         switch(playerList[key]["action"]){  // 改变移动中玩家的坐标   // change moving player's pos
@@ -26,6 +29,12 @@ setInterval(function(){ //更新玩家位置坐标  // update players' pos
         }
     }
 }, 20);  // 50Hz
+*/
+
+setInterval(function(){ //清除玩家列表    // clear all player
+    console.log("Clear PlayerList")
+    playerList = {}
+}, 10*60*1000);  // 10min
 
 wss.on('connection', function connection(ws) {
     console.log('New Connection')
@@ -37,7 +46,7 @@ wss.on('connection', function connection(ws) {
         switch(json["action"]){
             case "login":
                 ws.send(JSON.stringify({"player-id" : "server", "action" : "loadIn", "value" : playerList})) // 向新玩家发送总表    // send new player the playerList that contant all the ID and pos of players
-                playerList[json["player-id"]] = {"action" : "standing", "pos" : JSON.parse(JSON.stringify(initPos))} // 添加新玩家信息到总表(深拷贝)
+                playerList[json["player-id"]] = {"action" : "standing", "pos" : JSON.parse(JSON.stringify(initPos)), "color" : json["color"]} // 添加新玩家信息到总表(深拷贝)
                 wss.broadcast(JSON.stringify({"player-id" : json["player-id"], "action" : "newPlayerLogin", "value" : playerList[json["player-id"]]}))    // 广播新玩家的ID和pos // broadcast new player's ID and pos
                 break
             case "logout":
@@ -65,6 +74,7 @@ wss.on('connection', function connection(ws) {
                 break
             case "movementDone":
                 playerList[json["player-id"]]["action"] = "standing"
+                playerList[json["player-id"]]["pos"] = json["value"]
                 wss.broadcast(JSON.stringify({"player-id" : json["player-id"], "action" : "movementDone", "value" : json["value"]}))    // 广播停止运动的玩家的标准坐标   // broadcast the player that stop moving, sycn every player's playerList
                 break
         }
